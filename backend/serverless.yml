@@ -6,11 +6,12 @@ service: loot-of-lima-web-backend
 
 provider:
   name: aws
-  region: ap-southeast-1
-  profile: serverless
   runtime: python3.9
 
 functions:
   hello:
     handler: handler.hello
-    url: true
+    events:
+      - httpApi:
+          method: GET
+          path: /hello
