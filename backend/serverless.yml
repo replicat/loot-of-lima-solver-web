@@ -1,0 +1,13 @@
+frameworkVersion: "3"
+
+org: replicat
+app: loot-of-lima-web
+service: loot-of-lima-web-backend
+
+provider:
+  name: aws
+  runtime: python3.9
+
+functions:
+  hello:
+    handler: handler.hello
