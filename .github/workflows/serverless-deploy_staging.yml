@@ -1,0 +1,62 @@
+name: Deploy main branch on staging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: deploy
+    runs-on: ubuntu-latest
+
+    permissions:
+      deployments: write
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/setup-node@v1
+        with:
+          node-version: "16.x"
+      - run: npm ci
+
+      - uses: actions/setup-python@v3
+        with:
+          python-version: "3.9"
+      - run: |
+          python -m pip install --upgrade pip
+          python -m pip install poetry
+
+      - uses: chrnorm/deployment-action@v2
+        name: Create GitHub deployment
+        id: deployment
+        with:
+          token: "${{ github.token }}"
+          environment: staging
+
+      - run: |
+          npx serverless deploy --verbose --stage=staging
+          echo "::set-output name=endpoint::$(npx serverless backend:info | grep -E 'GET.*/solve' | sed 's/^.*\(http.*\)/\1/')"
+        name: Deploy with serverless
+        id: serverless
+        env:
+          SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
+
+      - uses: chrnorm/deployment-status@v2
+        if: success()
+        name: Update deployment status (success)
+        with:
+          token: "${{ github.token }}"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          environment-url: ${{ steps.serverless.outputs.endpoint }}
+          state: "success"
+
+      - uses: chrnorm/deployment-status@v2
+        if: failure()
+        name: Update deployment status (failure)
+        with:
+          token: "${{ github.token }}"
+          deployment-id: ${{ steps.deployment.outputs.deployment_id }}
+          environment-url: ${{ steps.serverless.outputs.endpoint }}
+          state: "failure"
