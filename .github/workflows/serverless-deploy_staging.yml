@@ -19,8 +19,7 @@ jobs:
         with:
           python-version: "3.9"
       - run: npm ci
-      - name: serverless deploy
-        uses: serverless/github-action@v3
+      - uses: serverless/github-action@v3
         with:
           args: deploy --stage=staging
         env:
