@@ -1,0 +1,32 @@
+frameworkVersion: "3"
+
+org: replicat
+app: loot-of-lima-web
+service: loot-of-lima-web-backend
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    usePoetry: true
+
+provider:
+  name: aws
+  region: ap-southeast-1
+  runtime: python3.9
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+          method: GET
+          path: /hello
+
+  solve:
+    handler: handler.solve
+    events:
+      - httpApi:
+          method: GET
+          path: /solve
