@@ -22,6 +22,6 @@ jobs:
       - run: |
           python -m pip install --upgrade pip
           python -m pip install poetry
-      - run: npx serverless deploy --stage=staging --verbose
+      - run: npx serverless deploy --verbose --stage=staging
         env:
           SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
