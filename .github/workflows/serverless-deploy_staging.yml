@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+      - ci/auto-deploy
 
 jobs:
   deploy:
