@@ -27,5 +27,4 @@ jobs:
       - uses: actions/upload-artifact@v3
         if: always()
         with:
-          name: serverless-compose-log
           path: .serverless/compose.log
